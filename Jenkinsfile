@@ -3,31 +3,23 @@ pipeline {
   options { timestamps() }
 
   environment {
-    IMAGE_NAME = "victory-backend"
+    IMAGE_NAME = "victory-frontend"
     TAG        = "main-${env.GIT_COMMIT.take(7)}"
+    DOCKER_BUILDKIT = '1'
   }
 
   stages {
-    stage('Checkout'){ 
+    stage('Checkout') {
       steps { 
         checkout scm 
-      } 
-    }
-
-    stage('Build & Test'){
-      when { branch 'main' }
-      steps {
-        sh 'chmod +x gradlew'
-        // 일단 테스트 건너뛰고 빌드만 수행
-        sh './gradlew clean build -x test'
       }
     }
 
-    stage('Docker Build (Local)'){
+    stage('Docker Build (Local)') {
       when { branch 'main' }
       steps {
         sh """
-          echo "=== Building Docker image locally ==="
+          echo "=== Building frontend Docker image locally ==="
           docker build -t ${IMAGE_NAME}:${TAG} -t ${IMAGE_NAME}:latest .
           
           echo "=== Verifying built images ==="
@@ -46,8 +38,8 @@ pipeline {
           // 인프라 파이프라인을 트리거하면서 새로운 태그 전달
           build job: 'victory-infra-deploy/main', 
                 parameters: [
-                  string(name: 'BACKEND_TAG', value: "${TAG}"),
-                  string(name: 'FRONTEND_TAG', value: 'latest') // 기존 프론트엔드 태그 유지
+                  string(name: 'BACKEND_TAG', value: 'latest'), // 기존 백엔드 태그 유지
+                  string(name: 'FRONTEND_TAG', value: "${TAG}")
                 ],
                 wait: false // 비동기 실행
         }
@@ -57,10 +49,10 @@ pipeline {
 
   post {
     success { 
-      echo "✅ Backend built locally: ${IMAGE_NAME}:${TAG}" 
+      echo "✅ Frontend built locally: ${IMAGE_NAME}:${TAG}" 
     }
     failure { 
-      echo "❌ Backend build failed" 
+      echo "❌ Frontend build failed" 
     }
   }
 }
