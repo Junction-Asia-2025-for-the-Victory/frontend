@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import App from "../App";
 import Login from "../pages/Login/Login";
 import Home from "../pages/Home/Home";
+import EpisodeList from "@/pages/Episode/Episode";
 // import { ProtectedRoute } from "./RequireAuth";
 // import { RequireGuest } from "./RequireGuest";
 // import ErrorPage from "../components/ErrorPage";
@@ -48,6 +49,10 @@ export const router = createBrowserRouter([
       {
         element: <Login />,
         path: "login",
+      },
+      {
+        element: <EpisodeList />,
+        path: "episode",
       },
     ],
   },
