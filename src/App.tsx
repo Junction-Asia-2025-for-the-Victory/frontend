@@ -26,10 +26,10 @@ function App() {
   }
 
   return (
-    <>
+    <div className="min-h-screen w-full max-w-md mx-auto bg-white border-x">
       <Outlet />
       <Toaster />
-    </>
+    </div>
   );
 }
 
