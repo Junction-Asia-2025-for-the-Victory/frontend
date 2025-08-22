@@ -16,7 +16,7 @@ pipeline {
     }
 
     stage('Docker Build (Local)') {
-      when { branch 'main' }
+      when { branch 'master' }
       steps {
         sh """
           echo "=== Building frontend Docker image locally ==="
@@ -32,7 +32,7 @@ pipeline {
     }
 
     stage('Trigger Infrastructure Deploy'){
-      when { branch 'main' }
+      when { branch 'master' }
       steps {
         script {
           // 인프라 파이프라인을 트리거하면서 새로운 태그 전달
