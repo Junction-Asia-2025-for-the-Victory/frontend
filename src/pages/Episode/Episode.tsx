@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import EpisodeBg from "../../assets/EpisodeBack.png";
+// import EpisodeBg from "../../assets/EpisodeBack.png";
+import GlowCanvas from "../../components/GlowCanvas";
 import { useNavigate } from "react-router";
 import school from "../../assets/school.jpg";
 import park from "../../assets/park.jpg";
@@ -70,7 +71,7 @@ export default function EpisodeList() {
       return episodeData[selectedEpisode as keyof typeof episodeData]
         .background;
     }
-    return EpisodeBg; // 기본 배경
+    return null; // 기본 배경
   };
 
   const handleClickEpisode = (ep: number) => {
@@ -123,16 +124,17 @@ export default function EpisodeList() {
 
   return (
     <>
+      <GlowCanvas />
       <div
-        className="flex flex-col justify-between min-h-screen text-center bg-cover bg-center relative transition-all duration-700 ease-in-out"
+        className="flex flex-col justify-between min-h-screen text-center bg-cover bg-center relative"
         style={{
           backgroundImage: `url(${getCurrentBackground()})`,
         }}
         onClick={handleTouchOutside}
       >
-        {/* 배경 전환을 부드럽게 하기 위한 오버레이 */}
+        {/* 배경 오버레이 */}
         <div
-          className="absolute inset-0 bg-black/10 transition-opacity duration-700"
+          className="absolute inset-0 bg-black/10"
           style={{
             opacity: selectedEpisode ? 0.3 : 0.1,
           }}
@@ -313,12 +315,12 @@ export default function EpisodeList() {
                         {isEpisodeCompleted(ep) && (
                           <span className="text-xs opacity-80">완료됨</span>
                         )}
-                        {isEpisodeLocked(ep) && (
-                          <span className="text-xs opacity-80">잠김</span>
-                        )}
+
                       </div>
                     )}
                   </div>
+
+                  {isEpisodeLocked(ep) && <div className="w-5" />}
                 </div>
 
                 {/* 선택된 에피소드 배경 그라데이션 */}
