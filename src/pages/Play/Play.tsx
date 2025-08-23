@@ -271,7 +271,7 @@ const Play: React.FC<PlayProps> = () => {
       </div>
 
       {/* 상단 헤더 */}
-      <div className="relative z-30 mx-4 mt-4">
+      <div className="relative z-30 mx-4 mt-2">
         <div className="bg-white/50 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/30">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-3">
@@ -299,19 +299,19 @@ const Play: React.FC<PlayProps> = () => {
           </div>
 
           {/* 호감도 바 */}
-          <div className="relative">
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className={`h-full bg-gradient-to-r ${affectionData.color} transition-all duration-700 ease-out relative`}
-                style={{ width: `${chatData.likeability}%` }}
-              >
-                <div className="absolute inset-0 bg-white/20 rounded-full"></div>
+          <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-600 w-4 flex justify-center">0</div>
+            <div className="relative w-full">
+              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full bg-gradient-to-r ${affectionData.color} transition-all duration-700 ease-out relative`}
+                  style={{ width: `${chatData.likeability}%` }}
+                  >
+                  <div className="absolute inset-0 bg-white/20 rounded-full"></div>
+                </div>
               </div>
             </div>
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>0</span>
-              <span>100</span>
-            </div>
+          <div className="text-sm text-gray-600 w-4 ml-2 flex justify-center">100</div>
           </div>
         </div>
       </div>
@@ -321,9 +321,6 @@ const Play: React.FC<PlayProps> = () => {
         <div className="z-30 px-5 py-4">
           <div className="bg-gradient-to-r from-purple-50/80 to-pink-50/80 rounded-2xl p-4 border border-purple-100">
             <div className="flex items-start space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center flex-shrink-0">
-                <MessageCircle className="w-5 h-5 text-white" />
-              </div>
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="font-bold text-gray-800">
@@ -352,10 +349,10 @@ const Play: React.FC<PlayProps> = () => {
                 )}
 
                 {chatData.feedback && chatData.feedback.trim() !== "" && (
-                  <div className="mt-2 py-3 px-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl  shadow-sm">
+                  <div className="mt-2 py-2 px-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl  shadow-sm">
                     <div className="flex items-start space-x-3">
                       <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
+                        <div className="flex items-center space-x-2 mb-1">
                           <span className="text-sm font-bold text-purple-700">
                             🎯 문법 피드백
                           </span>
@@ -373,7 +370,7 @@ const Play: React.FC<PlayProps> = () => {
         </div>
 
         {/* 버튼 */}
-        <div className="px-5 py-6 bg-white/90 ">
+        <div className="pb-6">
           <div className="flex justify-center">
             <button
               className={`relative w-20 h-20 rounded-full flex items-center justify-center text-white font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-2xl ${
@@ -393,15 +390,12 @@ const Play: React.FC<PlayProps> = () => {
             </button>
           </div>
 
-          <div className="text-center mt-4">
+          <div className="text-center">
             <p
               className={`text-sm font-medium ${
                 isRecording ? "text-red-600" : "text-gray-600"
               }`}
             >
-              {isRecording
-                ? "🎤 녹음 중... 버튼을 다시 눌러 완료"
-                : "🎙️ 버튼을 눌러 음성 입력 시작"}
             </p>
           </div>
         </div>
