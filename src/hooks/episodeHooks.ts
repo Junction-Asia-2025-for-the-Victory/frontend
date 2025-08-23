@@ -20,3 +20,13 @@ export const useStartEpisode = () => {
     },
   });
 };
+
+export const useAnswerChat = () => {
+  return useMutation({
+    mutationKey: ["answer-chat"],
+    mutationFn: async (audioFile: Blob) => {
+      const response = await episodeApi.answer(audioFile);
+      return response.data;
+    },
+  });
+};

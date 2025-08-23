@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import chatCharacter from "../../assets/chat.jpeg";
 import { Volume2, MicOff, Heart, MessageCircle } from "lucide-react";
 import ViedoPlayer from "./ViedoPlayer";
+import { useLocation } from "react-router";
+import { useStartEpisode } from "@/hooks/episodeHooks";
 
-// 호감도 데이터 타입 정의
 interface AffectionData {
   color: string;
   bgColor: string;
@@ -12,22 +13,130 @@ interface AffectionData {
   heartFilled: boolean;
 }
 
-// 컴포넌트 Props 타입 (현재는 props가 없지만 확장성을 위해)
 interface PlayProps {}
 
 const Play: React.FC<PlayProps> = () => {
-  const [affectionLevel] = useState<number>(65); // 호감도 0-100
-  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [currentMessage, setCurrentMessage] =
     useState<string>("안녕~ 만나서 반가워!");
-  const [feedback, setFeedback] = useState<string | null>(null); // 피드백 상태
-  const [recognizedText, setRecognizedText] = useState<string>(""); // 인식된 음성 텍스트
-  console.log(recognizedText);
-  // 캐릭터 이미지는 실제 구현에서 props로 받거나 state로 관리
-  // const chatCharacter: string =
-  //   "https://via.placeholder.com/400x800/e0e7ff/8b5cf6?text=Character";
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [recognizedText, setRecognizedText] = useState<string>("");
 
-  // 호감도에 따른 색상 및 상태 결정
+  // 🔑 mediaRecorder는 state 대신 ref로 관리 (state는 비동기라 바로 못 씀)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+
+  const startMutation = useStartEpisode();
+  const location = useLocation();
+  const [chatData, setChatData] = useState({
+    changeLike: 0,
+    characterName: "",
+    chat: "",
+    feedback: "",
+    img: "",
+    lastChat: false,
+    likeability: 0,
+    nickname: "",
+  });
+
+  const episodeId = location.state;
+
+  useEffect(() => {
+    if (episodeId) {
+      startMutation.mutate(episodeId, {
+        onSuccess: (res) => {
+          setChatData(res);
+        },
+        onError: (error) => {
+          console.error("Mutation failed:", error);
+        },
+      });
+    }
+  }, [episodeId]);
+
+  // 🎤 녹음 초기화 및 시작
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+
+      // 오디오 데이터 쌓기
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          setAudioChunks((prev) => [...prev, event.data]);
+        }
+      };
+
+      // stop 이벤트 → 서버 전송
+      recorder.onstop = () => {
+        handleSendAudio();
+      };
+
+      // ✅ 바로 녹음 시작
+      setAudioChunks([]);
+      recorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error("마이크 접근 권한 오류:", error);
+      alert("마이크 접근 권한이 필요합니다.");
+    }
+  };
+
+  // 🎤 녹음 중지
+  const stopRecording = () => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "recording"
+    ) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  // 오디오 데이터를 서버로 전송
+  const handleSendAudio = async () => {
+    if (audioChunks.length === 0) return;
+
+    try {
+      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+      const formData = new FormData();
+      formData.append("audioFile", audioBlob, "recording.webm");
+      formData.append("chatId", episodeId?.toString() || "1");
+
+      const response = await fetch("/api/v1/episode/chat", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("서버 응답:", result);
+
+        if (result.recognizedText) setRecognizedText(result.recognizedText);
+        if (result.response) setCurrentMessage(result.response);
+        if (result.feedback) setFeedback(result.feedback);
+        if (result.likeability !== undefined) {
+          setChatData((prev) => ({
+            ...prev,
+            likeability: result.likeability,
+          }));
+        }
+      } else {
+        console.error("서버 전송 실패:", response.statusText);
+      }
+    } catch (error) {
+      console.error("오디오 전송 오류:", error);
+    } finally {
+      setAudioChunks([]);
+    }
+  };
+
+  // 호감도 계산 함수 (그대로 유지)
   const getAffectionData = (level: number): AffectionData => {
     if (level >= 80)
       return {
@@ -70,52 +179,52 @@ const Play: React.FC<PlayProps> = () => {
     };
   };
 
-  const affectionData: AffectionData = getAffectionData(affectionLevel);
+  const affectionData = getAffectionData(chatData.likeability);
 
-  // 버튼 클릭 핸들러
-  const handleRecordingToggle = (): void => {
-    setIsRecording(!isRecording);
+  // 버튼 핸들러
+  const handleRecordingToggle = async () => {
     if (!isRecording) {
-      setRecognizedText("");
-      // 녹음 시작 시 피드백과 이전 인식 텍스트 초기화
-      setFeedback(null);
+      await startRecording();
     } else {
-      // 녹음 종료 시 예시 동작 (실제 구현에서는 음성 처리 로직)
-      setRecognizedText("안녕하세요!");
-      // 예시 피드백 (실제로는 AI 응답에 따라)
-      setTimeout(() => {
-        setFeedback("좋은 인사네요! 호감도가 올랐어요 💕");
-        setCurrentMessage("반가워요! 오늘 기분이 어때요?");
-      }, 1000);
+      stopRecording();
     }
   };
 
+  // 언마운트 시 스트림 해제
+  useEffect(() => {
+    return () => {
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen h-full w-full justify-between bg-gray-50 relative overflow-hidden">
-      {/* 배경 이미지 */}
+      {/* 배경 */}
       <div className="absolute inset-0 z-0">
         <img
           src={chatCharacter}
           alt="배경"
           className="w-full h-full object-cover"
         />
-        {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" /> */}
       </div>
       <div className="absolute inset-0 z-0">
         <ViedoPlayer emotion="waiting" />
       </div>
 
-      {/* 상단 헤더 - 호감도 표시 */}
+      {/* 상단 헤더 */}
       <div className="relative z-30 mx-4 mt-4">
         <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/30">
-          {/* 캐릭터 정보와 호감도 */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
                 <MessageCircle className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-800">캐릭터와 대화 중</h3>
+                <h3 className="font-bold text-gray-800">
+                  {chatData.characterName}와 대화 중
+                </h3>
                 <p className="text-xs text-gray-500">{affectionData.status}</p>
               </div>
             </div>
@@ -126,16 +235,18 @@ const Play: React.FC<PlayProps> = () => {
                   affectionData.heartFilled ? "fill-current" : ""
                 }`}
               />
-              <span className="font-bold text-gray-700">{affectionLevel}</span>
+              <span className="font-bold text-gray-700">
+                {chatData.likeability}
+              </span>
             </div>
           </div>
 
-          {/* 호감도 프로그레스 바 */}
+          {/* 호감도 바 */}
           <div className="relative">
             <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className={`h-full bg-gradient-to-r ${affectionData.color} transition-all duration-700 ease-out relative`}
-                style={{ width: `${affectionLevel}%` }}
+                style={{ width: `${chatData.likeability}%` }}
               >
                 <div className="absolute inset-0 bg-white/20 rounded-full"></div>
               </div>
@@ -148,11 +259,8 @@ const Play: React.FC<PlayProps> = () => {
         </div>
       </div>
 
-      {/* 캐릭터 대사 영역 */}
-
-      {/* 대화창 - 고정 */}
-      <div className=" z-20">
-        {/* 대화 헤더 */}
+      {/* 대화 영역 */}
+      <div className="z-20">
         <div className="z-30 px-5 py-4">
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-4 border border-purple-100">
             <div className="flex items-start space-x-3">
@@ -161,7 +269,9 @@ const Play: React.FC<PlayProps> = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="font-bold text-gray-800">캐릭터</span>
+                  <span className="font-bold text-gray-800">
+                    {chatData.characterName}
+                  </span>
                   <Heart
                     className={`w-4 h-4 ${affectionData.textColor} ${
                       affectionData.heartFilled ? "fill-current" : ""
@@ -172,13 +282,20 @@ const Play: React.FC<PlayProps> = () => {
                   {currentMessage}
                 </p>
 
+                {recognizedText && (
+                  <div className="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-200">
+                    <span className="text-xs font-medium text-blue-600">
+                      🎤 음성 인식
+                    </span>
+                    <p className="text-sm text-gray-700">{recognizedText}</p>
+                  </div>
+                )}
+
                 {feedback && (
                   <div className="mt-3 p-3 bg-white/60 rounded-xl border border-purple-200">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-xs font-medium text-purple-600">
-                        💭 피드백
-                      </span>
-                    </div>
+                    <span className="text-xs font-medium text-purple-600">
+                      💭 피드백
+                    </span>
                     <p className="text-sm text-gray-600">{feedback}</p>
                   </div>
                 )}
@@ -187,9 +304,8 @@ const Play: React.FC<PlayProps> = () => {
           </div>
         </div>
 
-        {/* 음성 컨트롤 영역 */}
+        {/* 버튼 */}
         <div className="px-5 py-8 bg-white">
-          {/* 음성 입력 버튼 */}
           <div className="flex justify-center">
             <button
               className={`relative w-20 h-20 rounded-full flex items-center justify-center text-white font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-2xl ${
@@ -200,19 +316,15 @@ const Play: React.FC<PlayProps> = () => {
               onClick={handleRecordingToggle}
               type="button"
             >
-              {/* 버튼 외곽 링 (녹음 중일 때만) */}
               {isRecording && (
                 <div className="absolute inset-0 rounded-full border-4 border-red-300 animate-ping"></div>
               )}
-
-              {/* 아이콘 */}
               <div className="relative z-10">
                 {isRecording ? <MicOff size={28} /> : <Volume2 size={28} />}
               </div>
             </button>
           </div>
 
-          {/* 상태 텍스트 */}
           <div className="text-center mt-4">
             <p
               className={`text-sm font-medium ${
@@ -226,65 +338,6 @@ const Play: React.FC<PlayProps> = () => {
           </div>
         </div>
       </div>
-
-      {/* 스타일 정의 */}
-      <style>{`
-        @keyframes ping {
-          75%, 100% {
-            transform: scale(2);
-            opacity: 0;
-          }
-        }
-        
-        @keyframes bounce {
-          0%, 20%, 53%, 80%, 100% {
-            transform: translateY(0);
-          }
-          40%, 43% {
-            transform: translateY(-8px);
-          }
-        }
-        
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: .7;
-          }
-        }
-        
-        .animate-ping {
-          animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-        
-        .animate-bounce {
-          animation: bounce 1s infinite;
-        }
-        
-        .animate-pulse {
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        /* 스크롤바 스타일링 */
-        .overflow-y-auto::-webkit-scrollbar {
-          width: 4px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-track {
-          background: #f1f5f9;
-          border-radius: 2px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 2px;
-        }
-        
-        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-      `}</style>
     </div>
   );
 };

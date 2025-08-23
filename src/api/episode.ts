@@ -16,6 +16,15 @@ export const episodeApi = {
     return privateApi.get<episodeListResponse>("/api/v1/episode");
   },
   start: (episodeId: number) => {
-    return privateApi.post("/api/v1/episode", episodeId);
+    return privateApi.post("/api/v1/episode", { episodeId });
+  },
+  answer: (audioFile: Blob) => {
+    const formData = new FormData();
+    formData.append("audioFile", audioFile, "recording.webm");
+    return privateApi.post("/api/v1/episode/answer", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
 };
