@@ -131,7 +131,7 @@ const Play: React.FC<PlayProps> = () => {
 
       const formData = new FormData();
       formData.append("audioFile", audioBlob, "recording.webm");
-      formData.append("chatId", episodeId?.toString() || "1");
+      formData.append("chatId", chatData.chatId?.toString() || "1");
 
       console.log("API 호출 시작"); // 디버깅
 

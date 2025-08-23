@@ -21,7 +21,7 @@ export const episodeApi = {
   answer: (audioFile: Blob) => {
     const formData = new FormData();
     formData.append("audioFile", audioFile, "recording.webm");
-    return privateApi.post("/api/v1/episode/answer", formData, {
+    return privateApi.post("/api/v1/episode/chat", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
