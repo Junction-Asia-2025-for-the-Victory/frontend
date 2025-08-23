@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import chatCharacter from "../../assets/chat.jpeg";
 import { Volume2, MicOff, Heart, MessageCircle } from "lucide-react";
+import ViedoPlayer from "./ViedoPlayer";
 
 // 호감도 데이터 타입 정의
 interface AffectionData {
@@ -99,6 +100,9 @@ const Play: React.FC<PlayProps> = () => {
           className="w-full h-full object-cover"
         />
         {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" /> */}
+      </div>
+      <div className="absolute inset-0 z-0">
+        <ViedoPlayer emotion="waiting" />
       </div>
 
       {/* 상단 헤더 - 호감도 표시 */}

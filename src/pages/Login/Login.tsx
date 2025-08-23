@@ -10,7 +10,7 @@ function Login() {
   };
   return (
     <div className="flex container relative h-screen flex-col items-center justify-center">
-            <img src={loginCharacterUrl} alt="login character" className="h-36 w-auto mb-5" />
+      <img src={loginCharacterUrl} alt="login character" className="h-36 w-auto mb-5" />
       <div className="w-[300px] mx-auto flex flex-col justify-center space-y-6 sm:w-[350px] mb-50">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight mb-4">
