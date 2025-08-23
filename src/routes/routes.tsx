@@ -17,6 +17,10 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
+        element: <Entry />,
+        path: "entry",
+      },
+      {
         element: (
           <ProtectedRoute>
             <Outlet />
@@ -43,13 +47,7 @@ export const router = createBrowserRouter([
             <Outlet />
           </RequireGuest>
         ),
-        children: [
-          { path: "login", element: <Login /> },
-          {
-            element: <Entry />,
-            path: "entry",
-          },
-        ],
+        children: [{ path: "login", element: <Login /> }],
       },
     ],
   },
