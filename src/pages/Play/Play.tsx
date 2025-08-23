@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Mic, MicOff, Volume2 } from "lucide-react";
-import characterImage from "../../assets/character.png";
-import backgroundImage from "../../assets/EpisodeBack.png";
+import characterImage from "../../assets/chat.jpeg";
+// import backgroundImage from "../../assets/EpisodeBack.png";
 // import { useLocation } from "react-router";
 
 // SpeechRecognition 타입 선언 (기존과 동일)
@@ -485,18 +485,18 @@ export default function Play() {
       {/* 기존 UI 코드 */}
       <div className="absolute inset-0 z-0">
         <img
-          src={backgroundImage}
+          src={characterImage}
           alt="배경"
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="flex-1 flex items-center justify-center bg-white/30 relative z-10">
+      {/* <div className="flex-1 flex items-center justify-center bg-white/30 relative z-10">
         <img
           src={characterImage}
           alt={characterName}
           className="max-h-[70vh] object-contain"
         />
-      </div>
+      </div> */}
 
       {/* 대화창 */}
       <div className="bg-white/60 absolute bottom-0 left-0 right-0 w-full backdrop-blur-sm border-t z-20">

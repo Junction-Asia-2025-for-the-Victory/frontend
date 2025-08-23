@@ -183,7 +183,7 @@ export default function EpisodeList() {
 
               {/* 에피소드 노드들 */}
               <div className="flex justify-between items-center relative">
-                {[1, 2, 3].map((ep, index) => {
+                {[1, 2, 3].map((ep) => {
                   const isCompleted = isEpisodeCompleted(ep);
                   const isLocked = isEpisodeLocked(ep);
                   const isCurrent = !isCompleted && !isLocked;
