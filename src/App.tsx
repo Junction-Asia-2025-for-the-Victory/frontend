@@ -28,10 +28,20 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen w-full max-w-md mx-auto bg-white border-x relative">
-      <img className="icon1 hidden md:block absolute" src={charLeft} alt="Character Right" style={{left: 'calc(50% + 260px)'}}/>
+    <div className="min-h-screen w-full max-w-md mx-auto bg-white relative">
+      <img
+        className="icon1 hidden md:block absolute"
+        src={charLeft}
+        alt="Character Right"
+        style={{ left: "calc(50% + 260px)" }}
+      />
       <Outlet />
-      <img className="icon2 hidden md:block absolute" src={charRight} alt="Character Left" style={{right: 'calc(50% + 260px)'}}/>
+      <img
+        className="icon2 hidden md:block absolute"
+        src={charRight}
+        alt="Character Left"
+        style={{ right: "calc(50% + 260px)" }}
+      />
       <Toaster />
     </div>
   );
