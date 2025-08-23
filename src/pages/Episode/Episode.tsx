@@ -315,7 +315,6 @@ export default function EpisodeList() {
                         {isEpisodeCompleted(ep) && (
                           <span className="text-xs opacity-80">완료됨</span>
                         )}
-
                       </div>
                     )}
                   </div>
@@ -412,7 +411,7 @@ export default function EpisodeList() {
                   {isEpisodeCompleted(selectedEpisode)
                     ? "다시 플레이하거나"
                     : "시작하기 버튼을 눌러"}{" "}
-                  게임을 시작하세요.
+                  대화를 시작하세요.
                 </span>
               </p>
             ) : (
