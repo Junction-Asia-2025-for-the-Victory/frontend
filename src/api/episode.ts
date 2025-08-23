@@ -15,4 +15,7 @@ export const episodeApi = {
   getList: () => {
     return privateApi.get<episodeListResponse>("/api/v1/episode");
   },
+  start: (episodeId: number) => {
+    return privateApi.post("/api/v1/episode", episodeId);
+  },
 };
