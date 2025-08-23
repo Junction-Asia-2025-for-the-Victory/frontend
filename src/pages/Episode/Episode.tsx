@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import GlowCanvas from "../../components/GlowCanvas";
 import { useNavigate } from "react-router";
 import school from "../../assets/school.jpg";
-import park from "../../assets/park.jpg";
-import star from "../../assets/star2.jpg";
+import cafeteria from "../../assets/cafeteria.png";
+import rain from "../../assets/rain.png";
 import { useGetEpisodeList } from "@/hooks/episodeHooks";
 import { Lock, Check } from "lucide-react";
 
@@ -47,17 +47,17 @@ export default function EpisodeList() {
       color: "#ff9a9e",
     },
     2: {
-      title: "공원에서",
-      description: "선선한 바람과 함께하는 대화",
+      title: "식당에서",
+      description: "갑작스런 만남으로 시작하는 대화",
       image: "/images/episode2.jpg",
-      background: `${park}`,
+      background: `${cafeteria}`,
       color: "#a8e6cf",
     },
     3: {
       title: "별이 빛나는 밤",
       description: "두 사람만의 특별한 시간",
       image: "/images/episode3.jpg",
-      background: `${star}`,
+      background: `${rain}`,
       color: "#ffd3a5",
     },
   };
@@ -84,7 +84,7 @@ export default function EpisodeList() {
     setSelectedEpisode(ep);
   };
 
-  const handleStartEpisode = () => {
+  const handleraintEpisode = () => {
     if (selectedEpisode && !isEpisodeLocked(selectedEpisode)) {
       setEpisode(selectedEpisode);
 
@@ -116,7 +116,7 @@ export default function EpisodeList() {
     }
 
     if (isCompleted) {
-      return "bg-green-100 border-green-300 text-green-700 backdrop-blur-sm active:scale-95";
+      return "bg-purple-200 border-purple-300 text-purple-700 backdrop-blur-sm active:scale-95";
     }
 
     return "bg-white/80 border-[#ceccff] text-[#6b68a8] backdrop-blur-sm active:scale-95";
@@ -405,13 +405,9 @@ export default function EpisodeList() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStartEpisode();
+                      handleraintEpisode();
                     }}
-                    className={`w-full mt-4 py-3 font-bold rounded-xl shadow-lg active:scale-95 transition-transform duration-150 hover:shadow-xl ${
-                      isEpisodeCompleted(ep)
-                        ? "bg-gradient-to-r from-green-400 to-green-500 text-white"
-                        : "bg-gradient-to-r from-[#ceccff] to-[#a39fe8] text-white"
-                    }`}
+                    className={`w-full mt-4 py-3 font-bold rounded-xl shadow-lg active:scale-95 transition-transform duration-150 hover:shadow-xl ${"bg-gradient-to-r from-[#ceccff] to-[#a39fe8] text-white"}`}
                   >
                     {isEpisodeCompleted(ep) ? "다시 플레이" : "시작하기"}
                   </button>
