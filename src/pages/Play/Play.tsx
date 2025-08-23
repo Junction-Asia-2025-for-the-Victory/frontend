@@ -24,8 +24,6 @@ interface PlayProps {}
 
 const Play: React.FC<PlayProps> = () => {
   const [isRecording, setIsRecording] = useState(false);
-  const [currentMessage, setCurrentMessage] =
-    useState<string>("안녕~ 만나서 반가워!");
   const [recognizedText, setRecognizedText] = useState<string>("");
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [currentEmotion, setCurrentEmotion] = useState<string>("waiting");
@@ -114,47 +112,46 @@ const Play: React.FC<PlayProps> = () => {
   };
 
   // 오디오 데이터를 서버로 전송
-const handleSendAudio = async () => {
-  console.log(
-    "handleSendAudio 호출, 청크 개수:",
-    audioChunksRef.current.length
-  ); // 디버깅
+  const handleSendAudio = async () => {
+    console.log(
+      "handleSendAudio 호출, 청크 개수:",
+      audioChunksRef.current.length
+    ); // 디버깅
 
-  if (audioChunksRef.current.length === 0) {
-    console.log("오디오 청크가 비어있음"); // 디버깅
-    return;
-  }
+    if (audioChunksRef.current.length === 0) {
+      console.log("오디오 청크가 비어있음"); // 디버깅
+      return;
+    }
 
-  // ✅ chatData가 제대로 로드됐는지 확인
-  if (!chatData.chatId) {
-    console.log("chatId가 아직 로드되지 않음:", chatData.chatId);
-    return;
-  }
+    // ✅ chatData가 제대로 로드됐는지 확인
+    if (!chatData.chatId) {
+      console.log("chatId가 아직 로드되지 않음:", chatData.chatId);
+      return;
+    }
 
-  try {
-    const audioBlob = new Blob(audioChunksRef.current, {
-      type: "audio/webm",
-    });
-    console.log("오디오 블롭 생성, 크기:", audioBlob.size); // 디버깅
+    try {
+      const audioBlob = new Blob(audioChunksRef.current, {
+        type: "audio/webm",
+      });
+      console.log("오디오 블롭 생성, 크기:", audioBlob.size); // 디버깅
 
-    const formData = new FormData();
-    formData.append("audioFile", audioBlob, "recording.webm");
-    formData.append("chatId", chatData.chatId.toString()); // ✅ || "1" 제거
-    
-    console.log("전송하는 chatId:", chatData.chatId); // ✅ 디버깅 추가
-    console.log("API 호출 시작"); // 디버깅
+      const formData = new FormData();
+      formData.append("audioFile", audioBlob, "recording.webm");
+      formData.append("chatId", chatData.chatId.toString()); // ✅ || "1" 제거
 
-    const response = await fetch("/api/v1/episode/chat", {
-      method: "POST",
-      body: formData,
-    });
+      console.log("전송하는 chatId:", chatData.chatId); // ✅ 디버깅 추가
+      console.log("API 호출 시작"); // 디버깅
 
-    if (response.ok) {
-      const result = await response.json();
-      console.log("서버 응답:", result);
+      const response = await fetch("/api/v1/episode/chat", {
+        method: "POST",
+        body: formData,
+      });
 
-      if (result.recognizedText) setRecognizedText(result.recognizedText);
-      if (result.response) setCurrentMessage(result.response);
+      if (response.ok) {
+        const result = await response.json();
+        console.log("서버 응답:", result);
+
+        if (result.recognizedText) setRecognizedText(result.recognizedText);
 
       // 🎯 전체 chatData 업데이트
       setChatData(result);
@@ -164,29 +161,29 @@ const handleSendAudio = async () => {
         setCurrentEmotion(result.img.toLowerCase());
       }
 
-      // 🎯 마지막 대화인지 확인하고 1초 후 완료 모달 표시
-      if (result.lastChat) {
-        setTimeout(() => {
-          setShowCompletionModal(true);
-        }, 1000);
-      }
+        // 🎯 마지막 대화인지 확인하고 1초 후 완료 모달 표시
+        if (result.lastChat) {
+          setTimeout(() => {
+            setShowCompletionModal(true);
+          }, 1000);
+        }
 
-      if (result.likeability !== undefined) {
-        setChatData((prev) => ({
-          ...prev,
-          likeability: result.likeability,
-        }));
+        if (result.likeability !== undefined) {
+          setChatData((prev) => ({
+            ...prev,
+            likeability: result.likeability,
+          }));
+        }
+      } else {
+        console.error("서버 전송 실패:", response.statusText);
       }
-    } else {
-      console.error("서버 전송 실패:", response.statusText);
+    } catch (error) {
+      console.error("오디오 전송 오류:", error);
+    } finally {
+      // 🎯 청크 초기화
+      audioChunksRef.current = [];
     }
-  } catch (error) {
-    console.error("오디오 전송 오류:", error);
-  } finally {
-    // 🎯 청크 초기화
-    audioChunksRef.current = [];
-  }
-};
+  };
 
   // 호감도 계산 함수 (그대로 유지)
   const getAffectionData = (level: number): AffectionData => {
@@ -338,9 +335,7 @@ const handleSendAudio = async () => {
                     }`}
                   />
                 </div>
-                <p className="text-gray-700 leading-relaxed">
-                  {currentMessage}
-                </p>
+                <p className="text-gray-700 leading-relaxed">{chatData.chat}</p>
 
                 {recognizedText && (
                   <div className="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-200">
