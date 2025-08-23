@@ -4,6 +4,8 @@ import { useAuthCheck } from "./hooks/userAuthHooks";
 import Loading from "./components/Loading";
 import { useAuthStore } from "./store/userStore";
 import { useEffect } from "react";
+import charLeft from "./assets/char_left.webp";
+import charRight from "./assets/char_right.webp";
 
 function App() {
   const { data: userData, isLoading } = useAuthCheck();
@@ -26,8 +28,10 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen w-full max-w-md mx-auto bg-white border-x">
+    <div className="min-h-screen w-full max-w-md mx-auto bg-white border-x relative">
+      <img className="icon1 hidden md:block absolute" src={charLeft} alt="Character Right" style={{left: 'calc(50% + 260px)'}}/>
       <Outlet />
+      <img className="icon2 hidden md:block absolute" src={charRight} alt="Character Left" style={{right: 'calc(50% + 260px)'}}/>
       <Toaster />
     </div>
   );

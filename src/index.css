@@ -116,5 +116,40 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: url('/src/assets/icon_ybm.svg');
+    background-repeat: repeat;
+    background-size: 150px 89px;
+    position: relative;
+    background-color: #C0C9EE;
   }
+  
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/src/assets/icon_ybm.svg');
+    background-repeat: repeat;
+    background-size: 100px 58px;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.icon1 {
+  position: fixed;
+  bottom: 0;
+  right: 10%;
+  height: 350px;
+  z-index: 100;
+}
+.icon2 {
+  position: fixed;
+  top: 10%;
+  height: 150px;
+  z-index: 100;
 }
