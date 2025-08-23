@@ -3,6 +3,7 @@ import App from "../App";
 import Login from "../pages/Login/Login";
 import Home from "../pages/Home/Home";
 import EpisodeList from "@/pages/Episode/Episode";
+import Play from "@/pages/Play/Play";
 // import { ProtectedRoute } from "./RequireAuth";
 // import { RequireGuest } from "./RequireGuest";
 // import ErrorPage from "../components/ErrorPage";
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
       {
         element: <EpisodeList />,
         path: "episode",
+      },
+      {
+        element: <Play />,
+        path: "play",
       },
     ],
   },
