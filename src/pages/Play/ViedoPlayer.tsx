@@ -8,9 +8,10 @@ import videoWaitingUrl from "@/assets/animation/Waiting.webm";
 
 interface ViedoPlayerProps {
     emotion: string;
+    onVideoEnd?: () => void;
 }
 
-function ViedoPlayer({ emotion }: ViedoPlayerProps) {
+function ViedoPlayer({ emotion, onVideoEnd }: ViedoPlayerProps) {
     let videoUrl = videoWaitingUrl;
 
     if (emotion === "happiness") {
@@ -27,9 +28,22 @@ function ViedoPlayer({ emotion }: ViedoPlayerProps) {
         videoUrl = videoWaitingUrl;
     }
 
+    const handleVideoEnded = () => {
+        // waiting이 아닌 감정 비디오가 끝났을 때만 콜백 호출
+        if (emotion !== "waiting" && onVideoEnd) {
+            onVideoEnd();
+        }
+    };
+
     return (
         <div>
-            <video src={videoUrl} autoPlay muted loop />
+            <video 
+                src={videoUrl} 
+                autoPlay 
+                muted 
+                loop={emotion === "waiting"} // waiting일 때만 loop
+                onEnded={handleVideoEnded}
+            />
         </div>
     )
 }

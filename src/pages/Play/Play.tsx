@@ -28,6 +28,7 @@ const Play: React.FC<PlayProps> = () => {
     useState<string>("안녕~ 만나서 반가워!");
   const [recognizedText, setRecognizedText] = useState<string>("");
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [currentEmotion, setCurrentEmotion] = useState<string>("waiting");
 
   // 🔑 mediaRecorder와 audioChunks 모두 ref로 관리
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -158,6 +159,11 @@ const handleSendAudio = async () => {
       // 🎯 전체 chatData 업데이트
       setChatData(result);
 
+      // 🎯 감정 영상 처리
+      if (result.img && ["Neutral", "Happiness", "Sadness", "Feel_affection", "Anger"].includes(result.img)) {
+        setCurrentEmotion(result.img.toLowerCase());
+      }
+
       // 🎯 마지막 대화인지 확인하고 1초 후 완료 모달 표시
       if (result.lastChat) {
         setTimeout(() => {
@@ -261,7 +267,10 @@ const handleSendAudio = async () => {
         />
       </div>
       <div className="absolute inset-0 z-0">
-        <ViedoPlayer emotion="waiting" />
+        <ViedoPlayer 
+          emotion={currentEmotion} 
+          onVideoEnd={() => setCurrentEmotion("waiting")}
+        />
       </div>
 
       {/* 상단 헤더 */}
