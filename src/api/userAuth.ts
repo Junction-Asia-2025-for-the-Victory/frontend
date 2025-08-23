@@ -11,4 +11,7 @@ export const userAuthApi = {
   logout: () => {
     return privateApi.get("/api/v1/auth/logout");
   },
+  setProfile: (nickname: string, gender: "male" | "female") => {
+    return privateApi.patch("/api/v1/user/profile", { nickname, gender });
+  },
 };
