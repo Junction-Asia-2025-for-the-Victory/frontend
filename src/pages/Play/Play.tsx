@@ -15,13 +15,13 @@ interface AffectionData {
 interface PlayProps {}
 
 const Play: React.FC<PlayProps> = () => {
-  const [affectionLevel, setAffectionLevel] = useState<number>(65); // 호감도 0-100
+  const [affectionLevel] = useState<number>(65); // 호감도 0-100
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [currentMessage, setCurrentMessage] =
     useState<string>("안녕~ 만나서 반가워!");
   const [feedback, setFeedback] = useState<string | null>(null); // 피드백 상태
   const [recognizedText, setRecognizedText] = useState<string>(""); // 인식된 음성 텍스트
-
+  console.log(recognizedText);
   // 캐릭터 이미지는 실제 구현에서 props로 받거나 state로 관리
   // const chatCharacter: string =
   //   "https://via.placeholder.com/400x800/e0e7ff/8b5cf6?text=Character";
