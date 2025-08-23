@@ -1,20 +1,33 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import chatCharacter from "../../assets/chat.jpeg";
 import { Volume2, MicOff, Heart, MessageCircle } from "lucide-react";
 
-const Play = () => {
-  const [affectionLevel, setAffectionLevel] = useState(65); // 호감도 0-100
-  const [isRecording, setIsRecording] = useState(false);
-  const [currentMessage, setCurrentMessage] = useState("안녕~ 만나서 반가워!");
-  const [feedback, setFeedback] = useState(null); // 피드백 상태
-  const [recognizedText, setRecognizedText] = useState(""); // 인식된 음성 텍스트
+// 호감도 데이터 타입 정의
+interface AffectionData {
+  color: string;
+  bgColor: string;
+  textColor: string;
+  status: string;
+  heartFilled: boolean;
+}
+
+// 컴포넌트 Props 타입 (현재는 props가 없지만 확장성을 위해)
+interface PlayProps {}
+
+const Play: React.FC<PlayProps> = () => {
+  const [affectionLevel, setAffectionLevel] = useState<number>(65); // 호감도 0-100
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [currentMessage, setCurrentMessage] =
+    useState<string>("안녕~ 만나서 반가워!");
+  const [feedback, setFeedback] = useState<string | null>(null); // 피드백 상태
+  const [recognizedText, setRecognizedText] = useState<string>(""); // 인식된 음성 텍스트
 
   // 캐릭터 이미지는 실제 구현에서 props로 받거나 state로 관리
-  // const chatCharacter =
+  // const chatCharacter: string =
   //   "https://via.placeholder.com/400x800/e0e7ff/8b5cf6?text=Character";
 
   // 호감도에 따른 색상 및 상태 결정
-  const getAffectionData = (level) => {
+  const getAffectionData = (level: number): AffectionData => {
     if (level >= 80)
       return {
         color: "from-pink-400 to-pink-500",
@@ -56,7 +69,25 @@ const Play = () => {
     };
   };
 
-  const affectionData = getAffectionData(affectionLevel);
+  const affectionData: AffectionData = getAffectionData(affectionLevel);
+
+  // 버튼 클릭 핸들러
+  const handleRecordingToggle = (): void => {
+    setIsRecording(!isRecording);
+    if (!isRecording) {
+      setRecognizedText("");
+      // 녹음 시작 시 피드백과 이전 인식 텍스트 초기화
+      setFeedback(null);
+    } else {
+      // 녹음 종료 시 예시 동작 (실제 구현에서는 음성 처리 로직)
+      setRecognizedText("안녕하세요!");
+      // 예시 피드백 (실제로는 AI 응답에 따라)
+      setTimeout(() => {
+        setFeedback("좋은 인사네요! 호감도가 올랐어요 💕");
+        setCurrentMessage("반가워요! 오늘 기분이 어때요?");
+      }, 1000);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen h-full w-full justify-between bg-gray-50 relative overflow-hidden">
@@ -162,22 +193,8 @@ const Play = () => {
                   ? "bg-gradient-to-br from-red-500 to-red-600 animate-pulse"
                   : "bg-gradient-to-br from-purple-500 to-pink-500"
               }`}
-              onClick={() => {
-                setIsRecording(!isRecording);
-                if (!isRecording) {
-                  setRecognizedText("");
-                  // 녹음 시작 시 피드백과 이전 인식 텍스트 초기화
-                  setFeedback(null);
-                } else {
-                  // 녹음 종료 시 예시 동작 (실제 구현에서는 음성 처리 로직)
-                  setRecognizedText("안녕하세요!");
-                  // 예시 피드백 (실제로는 AI 응답에 따라)
-                  setTimeout(() => {
-                    setFeedback("좋은 인사네요! 호감도가 올랐어요 💕");
-                    setCurrentMessage("반가워요! 오늘 기분이 어때요?");
-                  }, 1000);
-                }
-              }}
+              onClick={handleRecordingToggle}
+              type="button"
             >
               {/* 버튼 외곽 링 (녹음 중일 때만) */}
               {isRecording && (
