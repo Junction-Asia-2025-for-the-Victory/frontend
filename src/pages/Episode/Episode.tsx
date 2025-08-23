@@ -121,16 +121,6 @@ export default function EpisodeList() {
     return "bg-white/80 border-[#ceccff] text-[#6b68a8] backdrop-blur-sm active:scale-95";
   };
 
-  // 잠금 메시지 생성
-  const getLockMessage = (ep: number) => {
-    if (ep === 2) {
-      return "에피소드 1을 완료하면 잠금 해제됩니다";
-    } else if (ep === 3) {
-      return "에피소드 2를 완료하면 잠금 해제됩니다";
-    }
-    return "";
-  };
-
   return (
     <>
       <div
