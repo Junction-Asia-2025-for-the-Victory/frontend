@@ -38,6 +38,7 @@ const Play: React.FC<PlayProps> = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [chatData, setChatData] = useState({
+    chatId: 0,
     changeLike: 0,
     characterName: "",
     chat: "",
