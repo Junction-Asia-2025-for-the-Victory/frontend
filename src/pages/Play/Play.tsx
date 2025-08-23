@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Mic, MicOff, Volume2 } from "lucide-react";
 import characterImage from "../../assets/character.png";
 import backgroundImage from "../../assets/EpisodeBack.png";
-import { useLocation } from "react-router";
+// import { useLocation } from "react-router";
 
 // SpeechRecognition 타입 선언 (기존과 동일)
 interface SpeechRecognitionEvent extends Event {
@@ -64,8 +64,8 @@ export default function Play() {
   const recordingStartTime = useRef<number | null>(null);
   const animationRef = useRef<number | null>(null);
 
-  const location = useLocation();
   // selectedEpisode 변수 제거하고 필요시 직접 location.state 사용
+  // const location = useLocation();
 
   const [myName, characterName, characterId] = [
     "김윤배",
