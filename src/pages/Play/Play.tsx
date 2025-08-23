@@ -153,13 +153,22 @@ const Play: React.FC<PlayProps> = () => {
 
         if (result.recognizedText) setRecognizedText(result.recognizedText);
 
-      // 🎯 전체 chatData 업데이트
-      setChatData(result);
+        // 🎯 전체 chatData 업데이트
+        setChatData(result);
 
-      // 🎯 감정 영상 처리
-      if (result.img && ["Neutral", "Happiness", "Sadness", "Feel_affection", "Anger"].includes(result.img)) {
-        setCurrentEmotion(result.img.toLowerCase());
-      }
+        // 🎯 감정 영상 처리
+        if (
+          result.img &&
+          [
+            "Neutral",
+            "Happiness",
+            "Sadness",
+            "Feel_affection",
+            "Anger",
+          ].includes(result.img)
+        ) {
+          setCurrentEmotion(result.img.toLowerCase());
+        }
 
         // 🎯 마지막 대화인지 확인하고 1초 후 완료 모달 표시
         if (result.lastChat) {
@@ -264,8 +273,8 @@ const Play: React.FC<PlayProps> = () => {
         />
       </div>
       <div className="absolute inset-0 z-0">
-        <ViedoPlayer 
-          emotion={currentEmotion} 
+        <ViedoPlayer
+          emotion={currentEmotion}
           onVideoEnd={() => setCurrentEmotion("waiting")}
         />
       </div>
@@ -354,7 +363,7 @@ const Play: React.FC<PlayProps> = () => {
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
                           <span className="text-sm font-bold text-purple-700">
-                            🎯 문법 피드백
+                            🎯 올바른 문장
                           </span>
                         </div>
                         <p className="text-sm text-gray-700 leading-relaxed mb-2">
