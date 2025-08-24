@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import chatCharacter from "../../assets/chat.jpeg";
 import {
   Volume2,
-  MicOff,
+  Send,
   Heart,
   MessageCircle,
   CheckCircle,
@@ -153,13 +153,22 @@ const Play: React.FC<PlayProps> = () => {
 
         if (result.recognizedText) setRecognizedText(result.recognizedText);
 
-      // 🎯 전체 chatData 업데이트
-      setChatData(result);
+        // 🎯 전체 chatData 업데이트
+        setChatData(result);
 
-      // 🎯 감정 영상 처리
-      if (result.img && ["Neutral", "Happiness", "Sadness", "Feel_affection", "Anger"].includes(result.img)) {
-        setCurrentEmotion(result.img.toLowerCase());
-      }
+        // 🎯 감정 영상 처리
+        if (
+          result.img &&
+          [
+            "Neutral",
+            "Happiness",
+            "Sadness",
+            "Feel_affection",
+            "Anger",
+          ].includes(result.img)
+        ) {
+          setCurrentEmotion(result.img.toLowerCase());
+        }
 
         // 🎯 마지막 대화인지 확인하고 1초 후 완료 모달 표시
         if (result.lastChat) {
@@ -264,8 +273,8 @@ const Play: React.FC<PlayProps> = () => {
         />
       </div>
       <div className="absolute inset-0 z-0">
-        <ViedoPlayer 
-          emotion={currentEmotion} 
+        <ViedoPlayer
+          emotion={currentEmotion}
           onVideoEnd={() => setCurrentEmotion("waiting")}
         />
       </div>
@@ -300,18 +309,22 @@ const Play: React.FC<PlayProps> = () => {
 
           {/* 호감도 바 */}
           <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600 w-4 flex justify-center">0</div>
+            <div className="text-sm text-gray-600 w-4 flex justify-center">
+              0
+            </div>
             <div className="relative w-full">
               <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
                 <div
                   className={`h-full bg-gradient-to-r ${affectionData.color} transition-all duration-700 ease-out relative`}
                   style={{ width: `${chatData.likeability}%` }}
-                  >
+                >
                   <div className="absolute inset-0 bg-white/20 rounded-full"></div>
                 </div>
               </div>
             </div>
-          <div className="text-sm text-gray-600 w-4 ml-2 flex justify-center">100</div>
+            <div className="text-sm text-gray-600 w-4 ml-2 flex justify-center">
+              100
+            </div>
           </div>
         </div>
       </div>
@@ -354,7 +367,7 @@ const Play: React.FC<PlayProps> = () => {
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
                           <span className="text-sm font-bold text-purple-700">
-                            🎯 문법 피드백
+                            🎯 올바른 문장
                           </span>
                         </div>
                         <p className="text-sm text-gray-700 leading-relaxed mb-2">
@@ -375,17 +388,17 @@ const Play: React.FC<PlayProps> = () => {
             <button
               className={`relative w-20 h-20 rounded-full flex items-center justify-center text-white font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-2xl ${
                 isRecording
-                  ? "bg-gradient-to-br from-red-500 to-red-600 animate-pulse"
+                  ? "bg-gradient-to-br from-blue-500 to-blue-600 animate-pulse"
                   : "bg-gradient-to-br from-purple-500 to-pink-500"
               }`}
               onClick={handleRecordingToggle}
               type="button"
             >
               {isRecording && (
-                <div className="absolute inset-0 rounded-full border-4 border-red-300 animate-ping"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-blue-300 animate-ping"></div>
               )}
               <div className="relative z-10">
-                {isRecording ? <MicOff size={28} /> : <Volume2 size={28} />}
+                {isRecording ? <Send size={28} /> : <Volume2 size={28} />}
               </div>
             </button>
           </div>
@@ -393,10 +406,9 @@ const Play: React.FC<PlayProps> = () => {
           <div className="text-center">
             <p
               className={`text-sm font-medium ${
-                isRecording ? "text-red-600" : "text-gray-600"
+                isRecording ? "text-blue-400" : "text-gray-600"
               }`}
-            >
-            </p>
+            ></p>
           </div>
         </div>
       </div>
