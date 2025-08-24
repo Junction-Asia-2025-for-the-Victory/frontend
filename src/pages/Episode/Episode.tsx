@@ -122,25 +122,25 @@ export default function EpisodeList() {
     return "bg-white/80 border-[#ceccff] text-[#6b68a8] backdrop-blur-sm active:scale-95";
   };
 
-  const logout = async () => {
-    try {
-      // 서버에 로그아웃 요청
-      const response = await fetch("/api/v1/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // 인증 토큰이 있다면 헤더에 포함
-          Authorization: `Bearer ${localStorage.getItem("token")}` || "",
-        },
-        credentials: "include", // 쿠키를 포함하여 전송
-      });
-      console.log(response);
-    } catch {
-      (error: any) => {
-        console.log(error);
-      };
-    }
-  };
+  // const logout = async () => {
+  //   try {
+  //     // 서버에 로그아웃 요청
+  //     const response = await fetch("/api/v1/auth/logout", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // 인증 토큰이 있다면 헤더에 포함
+  //         Authorization: `Bearer ${localStorage.getItem("token")}` || "",
+  //       },
+  //       credentials: "include", // 쿠키를 포함하여 전송
+  //     });
+  //     console.log(response);
+  //   } catch {
+  //     (error: any) => {
+  //       console.log(error);
+  //     };
+  //   }
+  // };
 
   return (
     <>
@@ -152,8 +152,6 @@ export default function EpisodeList() {
         }}
         onClick={handleTouchOutside}
       >
-        <div className="w-full h-50 bg-black z-100" onClick={logout}></div>
-
         {/* 배경 오버레이 */}
         <div
           className="absolute inset-0 bg-black/10"
