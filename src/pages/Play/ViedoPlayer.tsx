@@ -3,7 +3,8 @@ import videoSadnessUrl from "@/assets/animation/Sadness.webm";
 import videoAngerUrl from "@/assets/animation/Anger.webm";
 import videoFeelAffectionUrl from "@/assets/animation/Feel_affection.webm";
 import videoNeutralUrl from "@/assets/animation/Neutral.webm";
-import videoWaitingUrl from "@/assets/animation/Waiting.webm";
+// import videoWaitingUrl from "@/assets/animation/Waiting.webm";
+import videoWaitingUrl from "@/assets/animation/Waiting.mp4";
 
 
 interface ViedoPlayerProps {
