@@ -44,6 +44,7 @@ function ViedoPlayer({ emotion, onVideoEnd }: ViedoPlayerProps) {
                 muted 
                 loop={emotion === "waiting"} // waiting일 때만 loop
                 onEnded={handleVideoEnded}
+                playsInline={true}
             />
         </div>
     )
